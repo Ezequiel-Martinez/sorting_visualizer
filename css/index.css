@@ -8,6 +8,7 @@
 body {
   height: 100vh;
   width: 100vw;
+  background-color: #303030;
 }
 
 main {
@@ -31,22 +32,24 @@ nav {
   position: sticky;
   width: 100%;
   height: 8vh;
-  background-color: #acb4ff;
+  background-color: #6a6e96;
   font-family: monospace;
+  color: #fff;
 }
 
 nav .nav__play-btn {
   margin-left: auto;
   margin-right: 10px;
-  height: 40px;
+  height: 90%;
   width: 60px;
-  border: 2px solid #7e8bff;
+  border: 2px solid #6a6e96;
   border-radius: 5px;
   outline: none;
 }
 
 nav .nav__play-btn:hover {
-  background-color: #cedbff;
+  background-color: #c2c8ff;
+  color: #303030;
 }
 
 nav .nav__play-btn:active {
@@ -73,7 +76,8 @@ nav .nav__sections {
 }
 
 nav .nav__sections:hover {
-  background-color: #c8ceff;
+  background-color: #c2c8ff;
+  color: #303030;
 }
 
 nav .nav__slider {
@@ -84,6 +88,7 @@ nav .nav__slider {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  height: 90%;
   padding: 0 20px;
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -91,8 +96,12 @@ nav .nav__slider {
 }
 
 nav .nav__slider--title {
-  font-size: 1.2rem;
-  font-weight: 200;
+  height: 50%;
+  font-size: 1rem;
+}
+
+nav .nav__slider input[type="range"] {
+  height: 50%;
 }
 
 .screen {
@@ -114,7 +123,7 @@ nav .nav__slider--title {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  background-color: #7e8bff;
+  background-color: #6a6e96;
   -webkit-box-align: end;
       -ms-flex-align: end;
           align-items: flex-end;
@@ -132,11 +141,11 @@ nav .nav__slider--title {
 }
 
 .screen .targeted {
-  background-color: #aacc11;
+  background-color: #fff243;
 }
 
 .screen .focused {
-  background-color: #ffda94;
+  background-color: #ff584d;
 }
 
 .screen .sorted {

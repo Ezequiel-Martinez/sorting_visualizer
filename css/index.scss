@@ -1,13 +1,10 @@
 @import "reset";
-
-$defaultColor: #7e8bff;
-$targetedColor: #aacc11;
-$focusedColor: #ffda94;
-$sortedColor: #7eff8b;
+@import "colorthemes";
 
 body {
     height: 100vh;
     width: 100vw;
+    background-color: $darkBackground;
 }
 
 main {
@@ -22,20 +19,22 @@ nav {
     position: sticky;
     width: 100%;
     height: 8vh;
-    background-color: #acb4ff;
+    background-color: $defaultColor_dark;
     font-family: monospace;
+    color: #fff;
 
     .#{&}__play-btn {
         margin-left: auto;
         margin-right: 10px;
-        height: 40px;
+        height: 90%;
         width: 60px;
-        border: 2px solid $defaultColor;
+        border: 2px solid $defaultColor_dark;
         border-radius: 5px;
         outline: none;
     
         &:hover {
-            background-color: #cedbff;
+            background-color: $defaultColor;
+            color: $darkBackground;
         }
     
         &:active {
@@ -54,19 +53,25 @@ nav {
         user-select: none;
 
         &:hover {
-            background-color: #c8ceff;
+            background-color: $defaultColor;
+            color: $darkBackground;
         }
     }
 
     .nav__slider {
         display: flex;
         flex-direction: column;
+        height: 90%;
         padding: 0 20px;
         align-items: center;
 
         &--title {
-            font-size: 1.2rem;
-            font-weight: 200;
+            height: 50%;
+            font-size: 1rem;
+        }
+
+        input[type="range"] {
+            height: 50%;
         }
 
     }
@@ -82,7 +87,7 @@ nav {
 
     #{&}__bar {
         display: flex;
-        background-color: $defaultColor;
+        background-color: $defaultColor_dark;
         align-items: flex-end;
         justify-content: center;
         flex-grow: 1;

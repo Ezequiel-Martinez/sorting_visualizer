@@ -9,6 +9,7 @@ const bar = `<div class="screen__bar"></div>`;
 let speed = speedSlider.value * (-1);
 let abort = false;
 let stop_ = false;
+let activeAlgorithm = "selection sort";
 
 speedSlider.addEventListener("mousemove", ()=> {
     speed = speedSlider.value * (-1);
@@ -17,10 +18,22 @@ speedSlider.addEventListener("click", ()=> {
     speed = speedSlider.value * (-1);
 })
 
-// itemSlider.addEventListener("mousemove", updateQuantity);
 itemSlider.addEventListener("click", updateQuantity);
 
-playBtn.addEventListener("click", selectionSort);
+playBtn.addEventListener("click", play);
+
+document.getElementById("selection-sort-btn").addEventListener("click", ()=> {
+    reset();
+    activeAlgorithm = "selection sort";
+});
+document.getElementById("bubble-sort-btn").addEventListener("click", ()=> {
+    reset();
+    activeAlgorithm = "bubble sort";
+});
+
+
+
+
 
 function setAbort() {abort = true};
 function setStop() {stop_ = true};
@@ -45,20 +58,17 @@ function updateQuantity() {
     ////////////////////////////////////
 
     bars = Array.from(document.querySelectorAll(".screen__bar"));
-    ratio = window.innerWidth / bars.length;
 
     setRandomHeight();
 
-    abort = true;
-    stop_ = false;
+    abort = true; // Si es que hay un sorting en curso, abortarlo.
+    stop_ = false; // Si es que hay un sorting en stop, cancelarlo.
 
-    // Reseting colors to default
+    resetColors();
 
-    for (const bar in bars) {
-    bars[bar].classList.remove("targeted");
-    bars[bar].classList.remove("sorted");
-    bars[bar].classList.remove("focused");
-    };
+    // Displaying numbers depending on the width of the bars
+
+    ratio = window.innerWidth / bars.length;
 
     if (ratio < 25) {
         bars.forEach(bar => {
@@ -71,6 +81,11 @@ function updateQuantity() {
         })
     }
 
+    /////////////////////////////////////////////////////////
+
+    playBtn.removeEventListener("click", setStop);
+    playBtn.addEventListener("click", play);
+    playBtn.textContent = "Play";
 }
 
 function setRandomHeight() {
@@ -85,13 +100,14 @@ function setRandomHeight() {
 }
 
 const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
 function statusDefault(element) {
-    if(element == undefined) return;
+    if (element == undefined) return;
 
     element.classList.remove("focused");
+    element.classList.remove("targeted");
 }
 
 async function statusSorted(element) {
@@ -107,52 +123,71 @@ async function statusSorted(element) {
     });
 }
 
-async function statusTargeted(element) {
+async function statusTargeted(element, element2) {
     await sleep(speed).then(()=> {
-
-        for (const bar in bars) {
-            statusDefault(bars[bar]);
-            bars[bar].classList.remove("targeted");
-        }
-
+    
         element.classList.remove("focused");
         element.classList.add("targeted");
+
+        if (element2) {
+            element2.classList.remove("focused");
+            element2.classList.add("targeted");
+        }
+
     });
 }
 
-async function statusFocused(element) {
+async function statusFocused(element, element2) {
+    await sleep(speed).then(()=> {
+        element.classList.add("focused");
 
-    if (speed != 0) {
+        if (element2) {
+            element2.classList.add("focused");
+        }
 
-        await sleep(speed).then(()=> {
-    
-            for (const bar in bars) {
-                statusDefault(bars[bar]);
-            }
-    
-            element.classList.add("focused");
-        });
-    }
-
-    for (const bar in bars) {
-        statusDefault(bars[bar]);
-    }
-
-    element.classList.add("focused");
-
+    });
 }
 
-function reset() {
+async function removeFocused(element) {
+    if (element == undefined) return;
+
+    await sleep(speed).then(()=> {
+        element.classList.remove("focused");
+    });
+}
+
+function resetColors() {
     for (const bar in bars) {
         bars[bar].classList.remove("targeted");
         bars[bar].classList.remove("sorted");
         bars[bar].classList.remove("focused");
     }
-
-    setRandomHeight();
-    selectionSort();
 }
 
+function reset() {
+    playBtn.removeEventListener("click", setStop);
+    playBtn.removeEventListener("click", retry);
+    playBtn.addEventListener("click", play);
+    playBtn.textContent = "Play";
+    resetColors();
+    abort = true;
+    setRandomHeight();
+}
+
+function retry() {
+    reset();
+    play();
+}
+
+function play() {
+    if (activeAlgorithm == "selection sort") 
+        selectionSort();
+
+    if (activeAlgorithm == "bubble sort")
+        bubbleSort();
+}
+
+// VALORES POR DEFECTO AL INICIAR LA PÁGINA
 
 setRandomHeight();
 
