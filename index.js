@@ -130,13 +130,13 @@ async function statusSorted(element) {
 }
 
 async function statusTargeted(element, element2) {
-    if (element == undefined) return;
-
     await sleep(speed).then(()=> {
-    
-        element.classList.remove("focused");
-        element.classList.add("targeted");
 
+        if (element) {
+            element.classList.remove("focused");
+            element.classList.add("targeted");
+        }
+    
         if (element2) {
             element2.classList.remove("focused");
             element2.classList.add("targeted");
@@ -170,6 +170,14 @@ async function removeFocused(element, element2) {
     });
 }
 
+async function removeTargeted(element) {
+    if (element == undefined) return;
+
+    await sleep(speed).then(()=> {
+        element.classList.remove("targeted");
+    });
+}
+
 function resetColors() {
     for (const bar in bars) {
         bars[bar].classList.remove("targeted");
@@ -183,8 +191,8 @@ function reset() {
     playBtn.removeEventListener("click", retry);
     playBtn.addEventListener("click", play);
     playBtn.textContent = "Play";
-    resetColors();
     abort = true;
+    resetColors();
     setRandomHeight();
 }
 

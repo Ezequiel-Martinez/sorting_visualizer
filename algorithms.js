@@ -36,7 +36,6 @@ async function selectionSort() {
                 playBtn.removeEventListener("click", setStop);
                 playBtn.addEventListener("click", retry);
                 playBtn.textContent = "Retry";
-                resetColors();
                 return;
             } 
 
@@ -114,7 +113,6 @@ async function bubbleSort() {
                 playBtn.removeEventListener("click", setStop);
                 playBtn.addEventListener("click", retry);
                 playBtn.textContent = "Retry";
-                resetColors();
                 return;
             } 
 
@@ -155,6 +153,10 @@ async function quickSort_partition(arr, low, high) {
     let i = low - 1;
     let aux;
 
+    bars.forEach(bar => {
+        statusDefault(bar);
+    })
+
     await statusTargeted(arr[high]);
 
     for (let j = low; j < high; j++) {
@@ -173,20 +175,24 @@ async function quickSort_partition(arr, low, high) {
             playBtn.removeEventListener("click", setStop);
             playBtn.addEventListener("click", retry);
             playBtn.textContent = "Retry";
-            resetColors();
             return;
         } 
 
         /////////////////////////////////////
 
+        removeTargeted(arr[i]);
+        removeTargeted(arr[j - 1]);
+
         removeFocused(arr[j - 1], arr[j + 1]);
+
         await statusFocused(arr[j]);
 
         if (parseInt(arr[j].style.height.slice(0, -2)) < pivot) {
-
-            removeFocused(arr[j - 1], arr[j + 1]);
-
             i++;
+
+            // dos veces para añadir delay
+            await statusTargeted(arr[i], arr[j]);
+            await statusTargeted(arr[i], arr[j]);
 
             aux = arr[j].style.order;
             arr[j].style.order = arr[i].style.order;
