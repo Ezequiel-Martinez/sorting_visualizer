@@ -95,6 +95,7 @@ function setRandomHeight() {
         let randomHeight = Math.floor(Math.random() * 500) + 15;
         bar.style.order = i + bars.length;
         bar.style.height = randomHeight + "px";
+        bar.textContent = randomHeight;
         i ++;
     })
 }
