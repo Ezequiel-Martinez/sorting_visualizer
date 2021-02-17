@@ -4,13 +4,6 @@ const speedSlider = document.getElementById("speed-slider");
 const itemSlider = document.getElementById("item-slider");
 const screen = document.querySelector(".screen");
 
-const bar = `<div class="screen__bar"></div>`;
-
-let speed = speedSlider.value * (-1);
-let abort = false;
-let stop_ = false;
-let activeAlgorithm = "selection sort";
-
 speedSlider.addEventListener("mousemove", ()=> {
     speed = speedSlider.value * (-1);
 })
@@ -30,8 +23,22 @@ document.getElementById("bubble-sort-btn").addEventListener("click", ()=> {
     reset();
     activeAlgorithm = "bubble sort";
 });
+document.getElementById("quicksort-btn").addEventListener("click", ()=> {
+    reset();
+    activeAlgorithm = "quicksort";
+});
 
 
+///// VARIABLES //////
+
+const bar = `<div class="screen__bar"></div>`;
+
+let speed = speedSlider.value * (-1);
+let abort = false;
+let stop_ = false;
+let activeAlgorithm = "selection sort";
+
+//////////////////////
 
 
 
@@ -66,6 +73,22 @@ function updateQuantity() {
 
     resetColors();
 
+    playBtn.removeEventListener("click", setStop);
+    playBtn.addEventListener("click", play);
+    playBtn.textContent = "Play";
+}
+
+function setRandomHeight() {
+    let i = 0;
+
+    bars.forEach(bar => {
+        let randomHeight = Math.floor(Math.random() * 500) + 15;
+        bar.style.order = i + bars.length;
+        bar.style.height = randomHeight + "px";
+        bar.textContent = randomHeight;
+        i ++;
+    })
+
     // Displaying numbers depending on the width of the bars
 
     ratio = window.innerWidth / bars.length;
@@ -82,22 +105,6 @@ function updateQuantity() {
     }
 
     /////////////////////////////////////////////////////////
-
-    playBtn.removeEventListener("click", setStop);
-    playBtn.addEventListener("click", play);
-    playBtn.textContent = "Play";
-}
-
-function setRandomHeight() {
-    let i = 0;
-
-    bars.forEach(bar => {
-        let randomHeight = Math.floor(Math.random() * 500) + 15;
-        bar.style.order = i + bars.length;
-        bar.style.height = randomHeight + "px";
-        bar.textContent = randomHeight;
-        i ++;
-    })
 }
 
 const sleep = (milliseconds) => {
@@ -112,19 +119,19 @@ function statusDefault(element) {
 }
 
 async function statusSorted(element) {
+    if (element == undefined) return;
+
     await sleep(speed).then(()=> {
 
-        for (const bar in bars) {
-            statusDefault(bars[bar]);
-            bars[bar].classList.remove("focused");
-        }
-
+        element.classList.remove("focused");
         element.classList.remove("targeted");
         element.classList.add("sorted");
     });
 }
 
 async function statusTargeted(element, element2) {
+    if (element == undefined) return;
+
     await sleep(speed).then(()=> {
     
         element.classList.remove("focused");
@@ -139,6 +146,8 @@ async function statusTargeted(element, element2) {
 }
 
 async function statusFocused(element, element2) {
+    if (element == undefined) return;
+
     await sleep(speed).then(()=> {
         element.classList.add("focused");
 
@@ -149,11 +158,15 @@ async function statusFocused(element, element2) {
     });
 }
 
-async function removeFocused(element) {
+async function removeFocused(element, element2) {
     if (element == undefined) return;
 
     await sleep(speed).then(()=> {
         element.classList.remove("focused");
+
+        if (element2) {
+            element2.classList.remove("focused");
+        }
     });
 }
 
@@ -186,6 +199,31 @@ function play() {
 
     if (activeAlgorithm == "bubble sort")
         bubbleSort();
+
+    if (activeAlgorithm == "quicksort")
+        quickSort_wrapper(bars, 0, bars.length - 1);
+}
+
+function sortingInitializer() {
+    resetColors();
+
+    abort = false;
+
+    // Despues de poner play, el boton funciona como stop
+
+    playBtn.removeEventListener("click", play);
+    playBtn.removeEventListener("click", retry);
+    playBtn.addEventListener("click", setStop);
+    playBtn.textContent = "Stop";
+}
+
+function sortingEnding() {
+    // YA ESTÁ ORDENADO. REINTENTAR
+
+    playBtn.removeEventListener("click", play);
+    playBtn.removeEventListener("click", setStop);
+    playBtn.addEventListener("click", retry);
+    playBtn.textContent = "Retry";
 }
 
 // VALORES POR DEFECTO AL INICIAR LA PÁGINA

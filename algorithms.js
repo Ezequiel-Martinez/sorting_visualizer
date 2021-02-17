@@ -1,20 +1,12 @@
 async function selectionSort() {
+    sortingInitializer();
+
     let aux;
     let j = 0;
     let currentBarHeight;
     let currentMinHeight;
     let currentMinIndex;
 
-    resetColors();
-
-    abort = false;
-
-    // Despues de poner play, el boton funciona como stop
-
-    playBtn.removeEventListener("click", play);
-    playBtn.removeEventListener("click", retry);
-    playBtn.addEventListener("click", setStop);
-    playBtn.textContent = "Stop";
 
     for (let i = 0; i < bars.length; i ++) {
 
@@ -73,6 +65,8 @@ async function selectionSort() {
 
         }
 
+        removeFocused(bars[j - 1]);
+
         // cambiando el orden de las barras en el array
 
         aux = bars[currentMinIndex];
@@ -88,32 +82,18 @@ async function selectionSort() {
         bars[i].style.order = aux;
     }
 
-    // YA ESTÁ ORDENADO. REINTENTAR
-
-    playBtn.removeEventListener("click", play);
-    playBtn.removeEventListener("click", setStop);
-    playBtn.addEventListener("click", retry);
-    playBtn.textContent = "Retry";
+    sortingEnding();
 }
 
 
 async function bubbleSort() {
+    sortingInitializer();
+
     let currentHeight;
     let currentNextHeight;
     let aux;
     let j;
     
-    resetColors();
-
-    abort = false;
-
-    // Despues de poner play, el boton funciona como stop
-
-    playBtn.removeEventListener("click", play);
-    playBtn.removeEventListener("click", retry);
-    playBtn.addEventListener("click", setStop);
-    playBtn.textContent = "Stop";
-
 
     for (let i = 0; i < bars.length - 1; i ++) {
         for (j = 0; j < bars.length - i - 1; j ++) {
@@ -161,14 +141,104 @@ async function bubbleSort() {
         }
 
         await statusSorted(bars[j]);
+        statusDefault(bars[j - 1]);
     }
 
     await statusSorted(bars[0]);
 
-    // YA ESTÁ ORDENADO. REINTENTAR
+    sortingEnding();
+}
 
-    playBtn.removeEventListener("click", play);
-    playBtn.removeEventListener("click", setStop);
-    playBtn.addEventListener("click", retry);
-    playBtn.textContent = "Retry";
+
+async function quickSort_partition(arr, low, high) {
+    let pivot = parseInt(arr[high].style.height.slice(0, -2));
+    let i = low - 1;
+    let aux;
+
+    await statusTargeted(arr[high]);
+
+    for (let j = low; j < high; j++) {
+
+        // abortar la ejecución del algoritmo
+
+        if (abort) {
+            playBtn.removeEventListener("click", setStop);
+            playBtn.addEventListener("click", play);
+            playBtn.textContent = "Play";
+            resetColors();
+            return;
+        };
+
+        if (stop_) {
+            playBtn.removeEventListener("click", setStop);
+            playBtn.addEventListener("click", retry);
+            playBtn.textContent = "Retry";
+            resetColors();
+            return;
+        } 
+
+        /////////////////////////////////////
+
+        removeFocused(arr[j - 1], arr[j + 1]);
+        await statusFocused(arr[j]);
+
+        if (parseInt(arr[j].style.height.slice(0, -2)) < pivot) {
+
+            removeFocused(arr[j - 1], arr[j + 1]);
+
+            i++;
+
+            aux = arr[j].style.order;
+            arr[j].style.order = arr[i].style.order;
+            arr[i].style.order = aux;
+
+            aux = arr[j];
+            arr[j] = arr[i];
+            arr[i] = aux;
+        }
+    }
+
+    aux = arr[i + 1].style.order;
+    arr[i + 1].style.order = arr[high].style.order;
+    arr[high].style.order = aux;
+
+    aux = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = aux;
+
+    await statusSorted(arr[i + 1]);
+
+    return i + 1;
+}
+
+async function quickSort_wrapper(arr, low, high) {
+    sortingInitializer();
+
+    await quickSort(arr, low, high);
+    
+    if (abort == false)
+        sortingEnding();
+
+    abort = false;
+    stop_ = false;
+}
+
+
+async function quickSort(arr, low, high) {
+    if (low < high && abort == false && stop_ == false) {
+
+        let pivot;
+
+        if (abort == false && stop_ == false)
+            pivot = await quickSort_partition(arr, low, high);
+
+            if (abort == false && stop_ == false)
+            await quickSort(arr, low, pivot - 1);
+
+            if (abort == false && stop_ == false)
+            await quickSort(arr, pivot + 1, high);
+    }
+
+    if (abort == false && stop_ == false)
+        statusSorted(arr[high]);
 }
