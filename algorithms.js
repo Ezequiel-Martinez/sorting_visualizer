@@ -249,15 +249,144 @@ async function quickSort(arr, low, high) {
         statusSorted(arr[high]);
 }
 
-async function merge(arr, left, medium, right) {
+
+async function merge(arr, left, mid, right, realMid) {
+    let lenghtLeft = mid - left + 1;
+    let lenghtRight = right - mid;
+    let L = [];
+    let R = [];
+    let element;
+    let i, j, k;
+    let isEnd = false;
+
+    if (lenghtRight >= realMid - 1 || lenghtLeft >= realMid - 1)
+        isEnd = true;
+
+    for (i = 0; i < lenghtLeft; i++)
+        L[i] = arr[left + i];
     
+    for (j = 0; j < lenghtRight; j++)
+        R[j] = arr[mid + 1 + j];
+
+    bars.forEach(bar => {
+        statusDefault(bar);
+    })
+
+    await statusTargeted(L[lenghtLeft - 1]);
+    await statusTargeted(R[lenghtRight - 1]);
+
+    i = 0;
+    j = 0;
+    k = left;
+  
+    while (i < lenghtLeft && j < lenghtRight) {
+
+        // abortar la ejecución del algoritmo
+
+        if (abort) {
+            playBtn.removeEventListener("click", setStop);
+            playBtn.addEventListener("click", play);
+            playBtn.textContent = "Play";
+            resetColors();
+            return;
+        };
+
+        if (stop_) {
+            playBtn.removeEventListener("click", setStop);
+            playBtn.addEventListener("click", retry);
+            playBtn.textContent = "Retry";
+            return;
+        } 
+
+        /////////////////////////////////////
+
+        removeFocused(L[i - 1]);
+        removeFocused(R[j - 1]);
+        await statusFocused(L[i], R[j]);
+
+        if (parseInt(L[i].style.height.slice(0, -2)) <= parseInt(R[j].style.height.slice(0, -2))) {
+
+            element = L[i];
+            element.style.order = k;
+            arr[k] = L[i];
+            i++;
+
+            statusDefault(arr[k]);
+
+            if (isEnd)
+                await statusSorted(arr[k]);
+        }    
+        else {
+
+            element = R[j];
+            element.style.order = k;
+            arr[k] = R[j];
+            j++;
+
+            statusDefault(arr[k]);
+
+            if (isEnd)
+                await statusSorted(arr[k]);
+        }
+
+        k++;
+    }
+
+    statusDefault(arr[k - 1]);
+
+    while (i < lenghtLeft) {
+
+        element = L[i];
+        element.style.order = k;
+        arr[k] = L[i];
+        i++;
+
+        statusDefault(arr[k - 1]);
+
+        if (isEnd)
+            await statusSorted(arr[k]);
+
+        k++;
+    }
+
+    while (j < lenghtRight) {
+
+        element = R[j];
+        element.style.order = k;
+        arr[k] = R[j];
+        j++;
+
+        if (isEnd)
+            await statusSorted(arr[k]);
+
+        k++;
+    }
+
+    removeTargeted(L[lenghtLeft - 1]);
+    removeTargeted(R[lenghtRight - 1]);
 }
 
-
-async function mergeSort(arr, left, right) {
+async function mergeSort(arr, left, right, realMid) {
     if (left < right) {
-        // Es lo mismo que "(left + right) / 2" pero evita overflow.
-        let medium = left + ((right - left) / 2);
 
+        // Igual que hacer "(right + left) / 2" pero evita overflow
+        let mid = Math.floor(left + ((right - left) / 2));
+
+        await mergeSort(arr, left, mid);
+        await mergeSort(arr, mid + 1, right);
+
+        await merge(arr, left, mid, right, realMid);
     }
+}
+
+async function mergeSort_wrapper(arr, left, right, realMid) {
+    sortingInitializer();
+
+    await mergeSort(arr, left, right, realMid);
+
+    if (abort == false)
+        sortingEnding();
+
+    abort = false;
+    stop_ = false;
 }

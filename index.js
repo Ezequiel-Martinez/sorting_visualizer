@@ -166,10 +166,8 @@ async function statusFocused(element, element2) {
     await sleep(speed).then(()=> {
         element.classList.add("focused");
 
-        if (element2) {
+        if (element2)
             element2.classList.add("focused");
-        }
-
     });
 }
 
@@ -179,9 +177,8 @@ async function removeFocused(element, element2) {
     await sleep(speed).then(()=> {
         element.classList.remove("focused");
 
-        if (element2) {
+        if (element2)
             element2.classList.remove("focused");
-        }
     });
 }
 
@@ -227,7 +224,7 @@ function play() {
         quickSort_wrapper(bars, 0, bars.length - 1);
 
     if (activeAlgorithm == "merge sort")
-        mergeSort(bars, 0, bars.length - 1);
+        mergeSort_wrapper(bars, 0, bars.length - 1, Math.floor(bars.length / 2));
 }
 
 function sortingInitializer() {
