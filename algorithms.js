@@ -238,10 +238,10 @@ async function quickSort(arr, low, high) {
         if (abort == false && stop_ == false)
             pivot = await quickSort_partition(arr, low, high);
 
-            if (abort == false && stop_ == false)
+        if (abort == false && stop_ == false)
             await quickSort(arr, low, pivot - 1);
 
-            if (abort == false && stop_ == false)
+        if (abort == false && stop_ == false)
             await quickSort(arr, pivot + 1, high);
     }
 
@@ -255,25 +255,26 @@ async function merge(arr, left, mid, right, realMid) {
     let lenghtRight = right - mid;
     let L = [];
     let R = [];
-    let element;
+    let aux;
     let i, j, k;
     let isEnd = false;
 
     if (lenghtRight >= realMid - 1 || lenghtLeft >= realMid - 1)
         isEnd = true;
 
+    let x = 0;
+    while (arr[x] != undefined) {
+        arr[x].style.order = 100000 + x;
+        x++;
+    }
+
     for (i = 0; i < lenghtLeft; i++)
         L[i] = arr[left + i];
     
-    for (j = 0; j < lenghtRight; j++)
+    for (j = 0; j < lenghtRight; j++) {
         R[j] = arr[mid + 1 + j];
-
-    bars.forEach(bar => {
-        statusDefault(bar);
-    })
-
-    await statusTargeted(L[lenghtLeft - 1]);
-    await statusTargeted(R[lenghtRight - 1]);
+        R[j].style.order = j + 100000;
+    }
 
     i = 0;
     j = 0;
@@ -300,30 +301,48 @@ async function merge(arr, left, mid, right, realMid) {
 
         /////////////////////////////////////
 
-        removeFocused(L[i - 1]);
-        removeFocused(R[j - 1]);
         await statusFocused(L[i], R[j]);
 
         if (parseInt(L[i].style.height.slice(0, -2)) <= parseInt(R[j].style.height.slice(0, -2))) {
 
-            element = L[i];
-            element.style.order = k;
-            arr[k] = L[i];
-            i++;
+            await statusTargeted(L[i], R[j]);
+            await statusTargeted(L[i], R[j]);
+            
+            aux = L[i].style.order;
+            L[i].style.order = R[j].style.order;
+            R[j].style.order = aux;
 
-            statusDefault(arr[k]);
+            L[i].style.order = k;
+            arr[k] = L[i];
+
+            removeTargeted(L[i]);
+            removeTargeted(R[j]);
+
+            removeFocused(L[i]);
+
+            i++;
 
             if (isEnd)
                 await statusSorted(arr[k]);
         }    
         else {
 
-            element = R[j];
-            element.style.order = k;
-            arr[k] = R[j];
-            j++;
+            await statusTargeted(L[i], R[j]);
+            await statusTargeted(L[i], R[j]);
 
-            statusDefault(arr[k]);
+            aux = L[i].style.order;
+            L[i].style.order = R[j].style.order;
+            R[j].style.order = aux;
+
+            R[j].style.order = k;
+            arr[k] = R[j];
+
+            removeTargeted(L[i]);
+            removeTargeted(R[j]);
+
+            removeFocused(R[j]);
+
+            j++;
 
             if (isEnd)
                 await statusSorted(arr[k]);
@@ -332,16 +351,17 @@ async function merge(arr, left, mid, right, realMid) {
         k++;
     }
 
-    statusDefault(arr[k - 1]);
-
     while (i < lenghtLeft) {
 
-        element = L[i];
-        element.style.order = k;
-        arr[k] = L[i];
-        i++;
+        await statusTargeted(L[i], R[j]);
+        await statusTargeted(L[i], R[j]);
 
-        statusDefault(arr[k - 1]);
+        L[i].style.order = k;
+        arr[k] = L[i];
+
+        removeTargeted(L[i]);
+
+        i++;
 
         if (isEnd)
             await statusSorted(arr[k]);
@@ -351,9 +371,14 @@ async function merge(arr, left, mid, right, realMid) {
 
     while (j < lenghtRight) {
 
-        element = R[j];
-        element.style.order = k;
+        await statusTargeted(L[i], R[j]);
+        await statusTargeted(L[i], R[j]);
+
+        R[j].style.order = k;
         arr[k] = R[j];
+
+        removeTargeted(R[j]);
+
         j++;
 
         if (isEnd)
@@ -361,9 +386,6 @@ async function merge(arr, left, mid, right, realMid) {
 
         k++;
     }
-
-    removeTargeted(L[lenghtLeft - 1]);
-    removeTargeted(R[lenghtRight - 1]);
 }
 
 async function mergeSort(arr, left, right, realMid) {
@@ -372,10 +394,14 @@ async function mergeSort(arr, left, right, realMid) {
         // Igual que hacer "(right + left) / 2" pero evita overflow
         let mid = Math.floor(left + ((right - left) / 2));
 
-        await mergeSort(arr, left, mid);
-        await mergeSort(arr, mid + 1, right);
+        if (abort == false && stop_ == false)
+            await mergeSort(arr, left, mid);
 
-        await merge(arr, left, mid, right, realMid);
+        if (abort == false && stop_ == false)
+            await mergeSort(arr, mid + 1, right);
+
+        if (abort == false && stop_ == false)
+            await merge(arr, left, mid, right, realMid);
     }
 }
 
