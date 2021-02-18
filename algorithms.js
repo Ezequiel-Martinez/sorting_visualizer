@@ -262,18 +262,12 @@ async function merge(arr, left, mid, right, realMid) {
     if (lenghtRight >= realMid - 1 || lenghtLeft >= realMid - 1)
         isEnd = true;
 
-    let x = 0;
-    while (arr[x] != undefined) {
-        arr[x].style.order = 100000 + x;
-        x++;
-    }
-
-    for (i = 0; i < lenghtLeft; i++)
+    for (i = 0; i < lenghtLeft; i++) {
         L[i] = arr[left + i];
+    }
     
     for (j = 0; j < lenghtRight; j++) {
         R[j] = arr[mid + 1 + j];
-        R[j].style.order = j + 100000;
     }
 
     i = 0;
@@ -308,12 +302,19 @@ async function merge(arr, left, mid, right, realMid) {
             await statusTargeted(L[i], R[j]);
             await statusTargeted(L[i], R[j]);
             
-            aux = L[i].style.order;
-            L[i].style.order = R[j].style.order;
-            R[j].style.order = aux;
+            let x = 0;
+            while (bars[x] != undefined) {
+                if (bars[x].style.order == k) {
+                    while (bars[x] != undefined) {
+                        bars[x].style.order += 1
+                        x++;
+                    }
+                }
+                x++;
+            }
 
-            L[i].style.order = k;
             arr[k] = L[i];
+            arr[k].style.order = k;
 
             removeTargeted(L[i]);
             removeTargeted(R[j]);
@@ -330,12 +331,19 @@ async function merge(arr, left, mid, right, realMid) {
             await statusTargeted(L[i], R[j]);
             await statusTargeted(L[i], R[j]);
 
-            aux = L[i].style.order;
-            L[i].style.order = R[j].style.order;
-            R[j].style.order = aux;
+            let x = 0;
+            while (bars[x] != undefined) {
+                if (bars[x].style.order == k) {
+                    while (bars[x] != undefined) {
+                        bars[x].style.order += 1
+                        x++;
+                    }
+                }
+                x++;
+            }
 
-            R[j].style.order = k;
             arr[k] = R[j];
+            arr[k].style.order = k;
 
             removeTargeted(L[i]);
             removeTargeted(R[j]);
@@ -356,8 +364,19 @@ async function merge(arr, left, mid, right, realMid) {
         await statusTargeted(L[i], R[j]);
         await statusTargeted(L[i], R[j]);
 
-        L[i].style.order = k;
+        let x = 0;
+        while (bars[x] != undefined) {
+            if (bars[x].style.order == k) {
+                while (bars[x] != undefined) {
+                    bars[x].style.order += 1
+                    x++;
+                }
+            }
+            x++;
+        }
+
         arr[k] = L[i];
+        arr[k].style.order = k;
 
         removeTargeted(L[i]);
 
@@ -374,8 +393,19 @@ async function merge(arr, left, mid, right, realMid) {
         await statusTargeted(L[i], R[j]);
         await statusTargeted(L[i], R[j]);
 
-        R[j].style.order = k;
+        let x = 0;
+        while (bars[x] != undefined) {
+            if (bars[x].style.order == k) {
+                while (bars[x] != undefined) {
+                    bars[x].style.order += 1
+                    x++;
+                }
+            }
+            x++;
+        }
+
         arr[k] = R[j];
+        arr[k].style.order = k;
 
         removeTargeted(R[j]);
 

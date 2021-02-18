@@ -95,6 +95,7 @@ function updateQuantity() {
 
 function setRandomHeight() {
     let i = 0;
+    bars = Array.from(document.querySelectorAll(".screen__bar"));
 
     bars.forEach(bar => {
         let randomHeight = Math.floor(Math.random() * 500) + 15;
