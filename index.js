@@ -3,6 +3,7 @@ const playBtn = document.querySelector(".nav__play-btn");
 const speedSlider = document.getElementById("speed-slider");
 const itemSlider = document.getElementById("item-slider");
 const screen = document.querySelector(".screen");
+const sections = document.getElementsByClassName("nav__sections");
 
 speedSlider.addEventListener("mousemove", ()=> {
     speed = speedSlider.value * (-1);
@@ -15,17 +16,25 @@ itemSlider.addEventListener("click", updateQuantity);
 
 playBtn.addEventListener("click", play);
 
-document.getElementById("selection-sort-btn").addEventListener("click", ()=> {
+document.getElementById("selection-sort-btn").addEventListener("click", function() {
+    toggleActiveSection(this);
     reset();
     activeAlgorithm = "selection sort";
 });
-document.getElementById("bubble-sort-btn").addEventListener("click", ()=> {
+document.getElementById("bubble-sort-btn").addEventListener("click", function() {
+    toggleActiveSection(this);
     reset();
     activeAlgorithm = "bubble sort";
 });
-document.getElementById("quicksort-btn").addEventListener("click", ()=> {
+document.getElementById("quicksort-btn").addEventListener("click", function() {
+    toggleActiveSection(this);
     reset();
     activeAlgorithm = "quicksort";
+});
+document.getElementById("merge-sort-btn").addEventListener("click", function() {
+    toggleActiveSection(this);
+    reset();
+    activeAlgorithm = "merge sort";
 });
 
 
@@ -40,7 +49,13 @@ let activeAlgorithm = "selection sort";
 
 //////////////////////
 
-
+function toggleActiveSection(element) {
+    for (let i = 0; i < sections.length; i++) {
+        let current = document.getElementsByClassName("active");
+        current[0].className = current[0].className.replace(" active", "");
+        element.className += " active";
+    }
+}
 
 function setAbort() {abort = true};
 function setStop() {stop_ = true};
@@ -210,6 +225,9 @@ function play() {
 
     if (activeAlgorithm == "quicksort")
         quickSort_wrapper(bars, 0, bars.length - 1);
+
+    if (activeAlgorithm == "merge sort")
+        mergeSort(bars, 0, bars.length - 1);
 }
 
 function sortingInitializer() {

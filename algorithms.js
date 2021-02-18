@@ -248,3 +248,16 @@ async function quickSort(arr, low, high) {
     if (abort == false && stop_ == false)
         statusSorted(arr[high]);
 }
+
+async function merge(arr, left, medium, right) {
+    
+}
+
+
+async function mergeSort(arr, left, right) {
+    if (left < right) {
+        // Es lo mismo que "(left + right) / 2" pero evita overflow.
+        let medium = left + ((right - left) / 2);
+
+    }
+}
