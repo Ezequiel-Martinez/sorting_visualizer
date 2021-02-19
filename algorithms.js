@@ -93,7 +93,6 @@ async function bubbleSort() {
     let aux;
     let j;
     
-
     for (let i = 0; i < bars.length - 1; i ++) {
         for (j = 0; j < bars.length - i - 1; j ++) {
 
@@ -255,20 +254,18 @@ async function merge(arr, left, mid, right, realMid) {
     let lenghtRight = right - mid;
     let L = [];
     let R = [];
-    let aux;
     let i, j, k;
     let isEnd = false;
 
+    // Si es el final del algoritmo hay que pintar las barras de verde
     if (lenghtRight >= realMid - 1 || lenghtLeft >= realMid - 1)
         isEnd = true;
 
-    for (i = 0; i < lenghtLeft; i++) {
+    for (i = 0; i < lenghtLeft; i++)
         L[i] = arr[left + i];
-    }
     
-    for (j = 0; j < lenghtRight; j++) {
+    for (j = 0; j < lenghtRight; j++)
         R[j] = arr[mid + 1 + j];
-    }
 
     i = 0;
     j = 0;
@@ -295,13 +292,17 @@ async function merge(arr, left, mid, right, realMid) {
 
         /////////////////////////////////////
 
-        await statusFocused(L[i], R[j]);
+        await statusFocused(L[i], R[j]); // Focusing las dos barras a evaluar
 
         if (parseInt(L[i].style.height.slice(0, -2)) <= parseInt(R[j].style.height.slice(0, -2))) {
 
             await statusTargeted(L[i], R[j]);
             await statusTargeted(L[i], R[j]);
             
+            // FIXEANDO EL BUG DE QUE QUEDAN BARRAS ENTRLAZADAS
+            // Cuando haya una barra con el mismo orden que se va a dar a
+            // la barra ordenada, desplazar un lugar todas las siguientes.
+
             let x = 0;
             while (bars[x] != undefined) {
                 if (bars[x].style.order == k) {
@@ -312,6 +313,8 @@ async function merge(arr, left, mid, right, realMid) {
                 }
                 x++;
             }
+
+            ////////////////////////////////////////////////////////////
 
             arr[k] = L[i];
             arr[k].style.order = k;
@@ -331,6 +334,10 @@ async function merge(arr, left, mid, right, realMid) {
             await statusTargeted(L[i], R[j]);
             await statusTargeted(L[i], R[j]);
 
+            // FIXEANDO EL BUG DE QUE QUEDAN BARRAS ENTRLAZADAS
+            // Cuando haya una barra con el mismo orden que se va a dar a
+            // la barra ordenada, desplazar un lugar todas las siguientes.
+
             let x = 0;
             while (bars[x] != undefined) {
                 if (bars[x].style.order == k) {
@@ -341,6 +348,8 @@ async function merge(arr, left, mid, right, realMid) {
                 }
                 x++;
             }
+
+            ////////////////////////////////////////////////////////////
 
             arr[k] = R[j];
             arr[k].style.order = k;
@@ -361,8 +370,13 @@ async function merge(arr, left, mid, right, realMid) {
 
     while (i < lenghtLeft) {
 
-        await statusTargeted(L[i], R[j]);
-        await statusTargeted(L[i], R[j]);
+        // Dos veces para añadir delay
+        await statusFocused(L[i]);
+        await statusFocused(L[i]);
+
+        // FIXEANDO EL BUG DE QUE QUEDAN BARRAS ENTRLAZADAS
+        // Cuando haya una barra con el mismo orden que se va a dar a
+        // la barra ordenada, desplazar un lugar todas las siguientes.
 
         let x = 0;
         while (bars[x] != undefined) {
@@ -375,10 +389,12 @@ async function merge(arr, left, mid, right, realMid) {
             x++;
         }
 
+        ////////////////////////////////////////////////////////////
+
         arr[k] = L[i];
         arr[k].style.order = k;
 
-        removeTargeted(L[i]);
+        removeFocused(L[i]);
 
         i++;
 
@@ -390,8 +406,13 @@ async function merge(arr, left, mid, right, realMid) {
 
     while (j < lenghtRight) {
 
-        await statusTargeted(L[i], R[j]);
-        await statusTargeted(L[i], R[j]);
+        // Dos veces para añadir delay
+        await statusFocused(R[j]);
+        await statusFocused(R[j]);
+
+        // FIXEANDO EL BUG DE QUE QUEDAN BARRAS ENTRLAZADAS
+        // Cuando haya una barra con el mismo orden que se va a dar a
+        // la barra ordenada, desplazar un lugar todas las siguientes.
 
         let x = 0;
         while (bars[x] != undefined) {
@@ -404,10 +425,12 @@ async function merge(arr, left, mid, right, realMid) {
             x++;
         }
 
+        ////////////////////////////////////////////////////////////
+
         arr[k] = R[j];
         arr[k].style.order = k;
 
-        removeTargeted(R[j]);
+        removeFocused(R[j]);
 
         j++;
 

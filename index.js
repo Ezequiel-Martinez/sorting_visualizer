@@ -157,7 +157,7 @@ async function statusTargeted(element, element2) {
             element2.classList.remove("focused");
             element2.classList.add("targeted");
         }
-
+        
     });
 }
 
