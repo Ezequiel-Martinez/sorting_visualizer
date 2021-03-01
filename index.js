@@ -31,7 +31,7 @@ document.getElementById("quicksort-btn").addEventListener("click", function() {
     reset();
     activeAlgorithm = "quicksort";
 });
-document.getElementById("merge-sort-btn").addEventListener("click", function() {
+document.getElementById("merge-sort-btn").addEventListener("click",  function() {
     toggleActiveSection(this);
     reset();
     activeAlgorithm = "merge sort";
@@ -173,7 +173,7 @@ async function statusFocused(element, element2) {
 }
 
 async function removeFocused(element, element2) {
-    if (element == undefined) return;
+    if (element == undefined || stop_) return;
 
     await sleep(speed).then(()=> {
         element.classList.remove("focused");
@@ -184,7 +184,7 @@ async function removeFocused(element, element2) {
 }
 
 async function removeTargeted(element) {
-    if (element == undefined) return;
+    if (element == undefined || stop_) return;
 
     await sleep(speed).then(()=> {
         element.classList.remove("targeted");

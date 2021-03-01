@@ -466,6 +466,9 @@ async function mergeSort_wrapper(arr, left, right, realMid) {
     if (abort == false)
         sortingEnding();
 
+    if (abort)
+        setRandomHeight();
+    
     abort = false;
     stop_ = false;
 }
